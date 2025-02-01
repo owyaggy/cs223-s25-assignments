@@ -57,5 +57,8 @@ int main() {
     printf("You bought %s\nYou have $%.2f left\n\n", snackbar[choice].name, money - snackbar[choice].cost);
   }
 
+  // free allocated memory
+  free(snackbar);
+
   return 0;
 }
