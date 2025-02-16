@@ -7,6 +7,7 @@
  ---------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // define a snack struct
 struct snack {
@@ -34,6 +35,8 @@ void sortName(struct node *head);
 
 void sortQuantity(struct node *head);
 
+void swap(struct node *head, struct node *new);
+
 int main() {
   int count;
   struct node *head;
@@ -46,14 +49,6 @@ int main() {
   head->next = NULL;
   printf("Enter a number of snacks: ");
   scanf("%d", &count);
-  // TODO allocate memory for snackbar?
-  // snackbar = malloc(sizeof(struct snack) * count);
-
-  // check malloc
-  //if (snackbar == NULL) {
-  //  printf("Error: malloc failed\n");
-  //  exit(1);
-  //}
 
   // prompt for attributes
   for (int i = 0; i < count; i++) {
@@ -75,7 +70,6 @@ int main() {
     } else {
       insert_first(head, new_snack);
     }
-    //free(new_snack);
   }
   
   printf("\nWelcome to Sorted Sally's Snack Bar.\n");
@@ -103,6 +97,7 @@ int main() {
 
 void insert_first(struct node *head, struct snack *new_snack) {
   struct node *temp;
+  temp = NULL;
   temp = malloc(sizeof(struct node));
   if (!temp) {
     printf("Malloc error\n");
@@ -136,13 +131,64 @@ void printListHelper(struct node *head, int count) {
 }
 
 void sortCost(struct node *head) {
-  // TODO
+  if (!head-> next) return;
+  int length;
+  length = 0;
+  struct node *min;
+  min = head;
+  for (struct node *cur = head->next; cur; cur = cur->next) {
+    if (cur->data->cost < min->data->cost) {
+      min = cur;
+    }
+  }
+
+  if (min != head) {
+    swap(head, min);
+  }
+
+  sortCost(head->next);
 }
 
 void sortName(struct node *head) {
-  // TODO
+  if (!head-> next) return;
+  int length;
+  length = 0;
+  struct node *min;
+  min = head;
+  for (struct node *cur = head->next; cur; cur = cur->next) {
+    if (strcmp(cur->data->name, min->data->name) < 0) {
+      min = cur;
+    }
+  }
+
+  if (min != head) {
+    swap(head, min);
+  }
+
+  sortName(head->next);
 }
 
 void sortQuantity(struct node *head) {
-  // TODO
+  if (!head-> next) return;
+  int length;
+  length = 0;
+  struct node *min;
+  min = head;
+  for (struct node *cur = head->next; cur; cur = cur->next) {
+    if (cur->data->quantity < min->data->quantity) {
+      min = cur;
+    }
+  }
+
+  if (min != head) {
+    swap(head, min);
+  }
+
+  sortQuantity(head->next);
+}
+
+void swap(struct node *head, struct node *new) {
+  struct snack *temp = head->data;
+  head->data = new->data;
+  new->data = temp;
 }
