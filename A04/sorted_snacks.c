@@ -192,3 +192,101 @@ void swap(struct node *head, struct node *new) {
   head->data = new->data;
   new->data = temp;
 }
+
+void insert_first(struct node *head, struct snack *new_snack) {
+  struct node *temp;
+  temp = NULL;
+  temp = malloc(sizeof(struct node));
+  if (!temp) {
+    printf("Malloc error\n");
+    exit(1);
+  }
+  temp->data = head->data;
+  temp->next = head->next;
+  head->data = new_snack;
+  head->next = temp;
+}
+
+void clear(struct node *head) {
+  if (head->next) {
+    clear(head->next);
+  }
+  if (head->data) {
+    free(head->data);
+  }
+  free(head);
+}
+
+void printList(struct node *head) {
+  printListHelper(head, 0);
+}
+
+void printListHelper(struct node *head, int count) {
+  printf("%d) %-12scost: $%-9.2fquantity: %d\n", count, head->data->name, head->data->cost, head->data->quantity);
+  if (head->next) {
+    printListHelper(head->next, ++count);
+  }
+}
+
+void sortCost(struct node *head) {
+  if (!head-> next) return;
+  int length;
+  length = 0;
+  struct node *min;
+  min = head;
+  for (struct node *cur = head->next; cur; cur = cur->next) {
+    if (cur->data->cost < min->data->cost) {
+      min = cur;
+    }
+  }
+
+  if (min != head) {
+    swap(head, min);
+  }
+
+  sortCost(head->next);
+}
+
+void sortName(struct node *head) {
+  if (!head-> next) return;
+  int length;
+  length = 0;
+  struct node *min;
+  min = head;
+  for (struct node *cur = head->next; cur; cur = cur->next) {
+    if (strcmp(cur->data->name, min->data->name) < 0) {
+      min = cur;
+    }
+  }
+
+  if (min != head) {
+    swap(head, min);
+  }
+
+  sortName(head->next);
+}
+
+void sortQuantity(struct node *head) {
+  if (!head-> next) return;
+  int length;
+  length = 0;
+  struct node *min;
+  min = head;
+  for (struct node *cur = head->next; cur; cur = cur->next) {
+    if (cur->data->quantity < min->data->quantity) {
+      min = cur;
+    }
+  }
+
+  if (min != head) {
+    swap(head, min);
+  }
+
+  sortQuantity(head->next);
+}
+
+void swap(struct node *head, struct node *new) {
+  struct snack *temp = head->data;
+  head->data = new->data;
+  new->data = temp;
+}
