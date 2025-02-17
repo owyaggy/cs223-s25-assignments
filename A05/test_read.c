@@ -9,14 +9,7 @@
 #include <string.h>
 #include "read_ppm.h"
 
-int main() {
-  int w, h;
-  w = h = 4;
-  char filename[64];
-  strncpy(filename, "feep-raw.ppm", 64);
-  struct ppm_pixel* pixels = read_ppm("feep-raw.ppm", &w, &h);
-
-  // todo: print out the grid of pixels
+void test_file(const char *filename, struct ppm_pixel* pixels, const int w, const int h) {
   printf("Testing file %s: %d %d\n", filename, w, h);
   for (int i = 0; i < w; i++) {
     for (int j = 0; j < h; j++) {
@@ -24,8 +17,18 @@ int main() {
     }
     printf("\n");
   }
+}
+
+int main() {
+  int w, h;
+  w = h = 4;
+  char filename[64];
+  strncpy(filename, "feep-raw.ppm", 64);
+  struct ppm_pixel* pixels = read_ppm(filename, &w, &h);
+
+  // todo: print out the grid of pixels
+  test_file(filename, pixels, w, h);
 
   free(pixels);
   return 0;
 }
-
