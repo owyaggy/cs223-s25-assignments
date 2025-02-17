@@ -30,21 +30,17 @@ struct ppm_pixel* read_ppm(const char* filename, int* w, int* h) {
   // read header lines (inflexible, but one comment is valid assumption under specs)
   char header[256];
   fgets(header, 255, infile); // gets magic number
-  printf("%s", header);
   fgets(header, 255, infile); // gets comment
-  printf("%s", header);
   fgets(header, 255, infile); // gets dimensions
-  printf("%s", header);
   fgets(header, 255, infile); // gets maxval
-  printf("%s", header);
 
+  // iteratively get all the pixel bytes, alternate between r/g/b stores
   for (int ch = fgetc(infile), i = 0; ch != EOF; ch = fgetc(infile), i++) {
-    printf("i: %d\tch: %d\n", i, ch);
-    // TODO: assignment is not working, fix!
     if (i % 3 == 0) pixels[i / 3].red = ch;
     else if (i % 3 == 1) pixels[i / 3].green = ch;
     else if (i % 3 == 2) pixels[i / 3].blue = ch;
   }
+  fclose(infile);
   return pixels;
 }
 
