@@ -14,7 +14,7 @@
 
 struct ppm_pixel* read_ppm(const char* filename, int* w, int* h) {
   FILE *infile;
-  infile = fopen(filename, "r"); // relative path name of file, read mode (textbook)
+  infile = fopen(filename, "rb"); // relative path name of file, read binary mode
   if (infile == NULL) {
     printf("Error: unable to open file %s\n", filename);
     return NULL; // specification requires returning NULL if file can't be loaded
@@ -34,12 +34,9 @@ struct ppm_pixel* read_ppm(const char* filename, int* w, int* h) {
   fgets(header, 255, infile); // gets dimensions
   fgets(header, 255, infile); // gets maxval
 
-  // iteratively get all the pixel bytes, alternate between r/g/b stores
-  for (int ch = fgetc(infile), i = 0; ch != EOF; ch = fgetc(infile), i++) {
-    if (i % 3 == 0) pixels[i / 3].red = ch;
-    else if (i % 3 == 1) pixels[i / 3].green = ch;
-    else if (i % 3 == 2) pixels[i / 3].blue = ch;
-  }
+  // get raster
+  fread(pixels, sizeof(struct ppm_pixel), (*w)*(*h), infile);
+
   fclose(infile);
   return pixels;
 }

@@ -26,11 +26,7 @@ void write_ppm(const char* filename, struct ppm_pixel* pixels, int w, int h) {
   fprintf(outfile, "255\n");
 
   // create raster
-  for (int i = 0; i < w*h*3; i++) {
-    if (i % 3 == 0) fputc(pixels[i / 3].red, outfile);
-    else if (i % 3 == 1) fputc(pixels[i / 3].green, outfile);
-    else if (i % 3 == 2) fputc(pixels[i / 3].blue, outfile);
-  }
+  fwrite(pixels, sizeof(struct ppm_pixel), w*h, outfile);
   fclose(outfile);
 }
 
