@@ -21,7 +21,6 @@ void test_file(const char *filename, struct ppm_pixel* pixels, const int w, cons
 
 int main() {
   int w, h;
-  w = h = 4;
   char filename[64];
   strncpy(filename, "feep-raw.ppm", 64);
   struct ppm_pixel* pixels = read_ppm(filename, &w, &h);

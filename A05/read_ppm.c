@@ -17,16 +17,21 @@
 int* read_header(FILE *infile) {
   int *dimensions;
   dimensions = malloc(sizeof(int) * 2);
+  if (!dimensions) {
+    printf("Error: malloc failed!\n");
+    exit(1);
+  }
   // read header lines (inflexible, but one comment is valid assumption under specs)
   char header[256];
   fgets(header, 255, infile); // gets magic number
   fgets(header, 255, infile); // gets comment
   fgets(header, 255, infile); // gets dimensions
   // split dimensions into width and height
-  char *dimension_chars;
-  dimension_chars = strtok(header, " ");
-  dimensions[0] = dimension_chars[0];
-  dimensions[1] = dimension_chars[1];
+  char *dimension_chars[2];
+  dimension_chars[0] = strtok(header, " ");
+  dimension_chars[1] = strtok(NULL, " ");
+  dimensions[0] = atoi(dimension_chars[0]);
+  dimensions[1] = atoi(dimension_chars[1]);
   fgets(header, 255, infile); // gets maxval
   return dimensions;
 }
@@ -35,11 +40,18 @@ int* read_header(FILE *infile) {
 
 struct ppm_pixel* read_ppm(const char* filename, int* w, int* h) {
   FILE *infile;
-  infile = fopen(filename, "rb"); // relative path name of file, read binary mode
+  infile = fopen(filename, "r"); // relative path name of file, read binary mode
   if (infile == NULL) {
     printf("Error: unable to open file %s\n", filename);
     return NULL; // specification requires returning NULL if file can't be loaded
   }
+
+  // read header (function returns pointer to dimensions array)
+  int *dimensions;
+  dimensions = read_header(infile);
+  *w = dimensions[0];
+  *h = dimensions[1];
+  free(dimensions);
 
   struct ppm_pixel *pixels;
   pixels = malloc(sizeof(struct ppm_pixel) * (*w) * (*h));
@@ -47,9 +59,6 @@ struct ppm_pixel* read_ppm(const char* filename, int* w, int* h) {
     printf("Error: malloc failed\n");
     return NULL; // specification requires returning NULL if memory can't be allocated
   }
-
-  // read header (function returns pointer to dimensions array)
-  free(read_header(infile));
 
   // get raster
   fread(pixels, sizeof(struct ppm_pixel), (*w)*(*h), infile);
