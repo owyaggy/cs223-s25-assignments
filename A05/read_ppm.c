@@ -40,7 +40,7 @@ int* read_header(FILE *infile) {
 
 struct ppm_pixel* read_ppm(const char* filename, int* w, int* h) {
   FILE *infile;
-  infile = fopen(filename, "r"); // relative path name of file, read binary mode
+  infile = fopen(filename, "rb"); // relative path name of file, read binary mode
   if (infile == NULL) {
     printf("Error: unable to open file %s\n", filename);
     return NULL; // specification requires returning NULL if file can't be loaded

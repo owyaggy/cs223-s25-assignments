@@ -13,7 +13,7 @@
 
 void write_ppm(const char* filename, struct ppm_pixel* pixels, int w, int h) {
   FILE *outfile;
-  outfile = fopen(filename, "w");
+  outfile = fopen(filename, "wb");
   if (outfile == NULL) {
     printf("Error: unable to open outfile\n");
     exit(1);

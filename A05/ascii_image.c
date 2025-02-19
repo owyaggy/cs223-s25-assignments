@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     for (int j = 0; j < w; j++) {
       float intensity;
       intensity = (float) (1.0/3) * ((pixels[i*w+j].red) + (pixels[i*w+j].green) + (pixels[i*w+j].blue));
-      int intensity_idx = intensity / 26; // what happens here
+      int intensity_idx = intensity / 26;
       printf("%c", symbols[intensity_idx]);
     }
     printf("\n");
