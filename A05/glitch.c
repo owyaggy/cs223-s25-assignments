@@ -73,6 +73,7 @@ void grid_filters(struct ppm_pixel *pixels, int w, int h) {
   int rgbs[21] = {255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 0, 255, 0, 255, 0, 255, 0, 0, 0, 0};
   srand(time(NULL));
   int rows = rand() % 40 + 10;
+  if (rows >= h*0.35) rows = h / 5;
   int *filters;
   int row_sections;
   filters = NULL;
@@ -82,7 +83,8 @@ void grid_filters(struct ppm_pixel *pixels, int w, int h) {
   for (int i = 0; i < h; i++) { // each row
     if (i % (h / rows) == 0) { // if time to change filters
       free(filters); // get rid of old filters
-      row_sections = rand() % 30 + 8; // decide how many filters per row
+      row_sections = rand() % 30 + 10; // decide how many filters per row
+      if (row_sections >= w*0.35) row_sections = w / 5;
       filters = malloc(sizeof(int) * row_sections); // allocate filter space
       if (!filters) {
         printf("Error: malloc failed!\n");
@@ -97,13 +99,13 @@ void grid_filters(struct ppm_pixel *pixels, int w, int h) {
       if (j % (w / row_sections) == 0 && j != 0) filter_idx++;
       filter = filters[filter_idx % row_sections];
       if (filter == 6) {
-        pixels[i*w+j].red *= 0.27;
-        pixels[i*w+j].green *= 0.27;
-        pixels[i*w+j].blue *= 0.27;
+        pixels[i*w+j].red *= 0.35;
+        pixels[i*w+j].green *= 0.35;
+        pixels[i*w+j].blue *= 0.35;
       } else {
-        pixels[i*w+j].red = pixels[i*w+j].red + (0.5 * (rgbs[filter] - pixels[i*w+j].red));
-        pixels[i*w+j].green = pixels[i*w+j].green + (0.5 * (rgbs[filter+1] - pixels[i*w+j].green));
-        pixels[i*w+j].blue = pixels[i*w+j].blue + (0.5 * (rgbs[filter+2] - pixels[i*w+j].blue));
+        pixels[i*w+j].red = pixels[i*w+j].red + (0.2 * (rgbs[3*filter] - pixels[i*w+j].red));
+        pixels[i*w+j].green = pixels[i*w+j].green + (0.2 * (rgbs[3*filter+1] - pixels[i*w+j].green));
+        pixels[i*w+j].blue = pixels[i*w+j].blue + (0.2 * (rgbs[3*filter+2] - pixels[i*w+j].blue));
       }
     }
   }
