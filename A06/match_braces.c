@@ -84,7 +84,7 @@ int* pop(struct node *head) {
   result[0] = head->row;
   result[1] = head->col;
   void *ptr = head->next;
-  head->row = head->nexxt->row;
+  head->row = head->next->row;
   head->col = head->next->col;
   head->next = head->next->next;
   free(ptr);
