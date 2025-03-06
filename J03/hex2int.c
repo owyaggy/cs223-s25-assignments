@@ -63,9 +63,9 @@ int main(int argc, char *argv[])
       int value;
 
       if (c == '0') {
-        value = c - '0';
+        value = 0;
       } else if (c == '1') {
-        value = c - '1';
+        value = 1;
       } else {
         printf("Invalid hexadecimal character: %c\n", c);
         exit(1);
