@@ -8,9 +8,9 @@ struct node {
   struct node *next;
 };
 
-void push(int new_row, int new_col, struct node *head);
+void push(int new_row, int new_col, struct node **head);
 
-int* pop(struct node *head);
+unsigned long pop(struct node **head);
 
 void clearL(struct node *head);
 
@@ -19,82 +19,101 @@ void printL(struct node *head);
 void read_file(FILE *infile);
 
 int main(int argc, char *argv[]) {
-  if (argc != 2) {
+  if (argc != 2) { // ensure correct number of args
     printf("usage: ./match_braces <program.c>\n");
     exit(1);
   }
-  FILE *infile;
-  infile = fopen(argv[1], "r");
-  if (infile == NULL) {
+  FILE *infile; // set infile
+  infile = fopen(argv[1], "r"); // open file
+  if (infile == NULL) { // check file opened successfully
     printf("Cannot open file: %s\n", argv[1]);
     exit(1);
   }
-  read_file(infile);
-  fclose(infile);
+  read_file(infile); // run read_file function
+  fclose(infile); // close file
   return 0;
 }
 
-void push(int new_row, int new_col, struct node *head) {
-  // create temp node to hold head (and whole stack)
-  if (head->row < 0 || head->col < 0) {
-    head->row = new_row;
-    head->col = new_col;
-    head->next = NULL;
-    return;
-  }
-  struct node *temp;
-  temp = NULL;
-  temp = malloc(sizeof(struct node));
-  if (!temp) {
-    printf("Error: malloc failed\n");
+unsigned long pop(struct node **head) {
+  // check
+  if (!(*head)) {
+    printf("Pop was passed an empty stack!\n");
     exit(1);
   }
-  // give temp the head node's data
-  temp->row = head->row;
-  temp->col = head->col;
-  temp->next = head->next;
-  // put the new data into the head node
-  // and have it point to the previous stack
-  head->row = new_row;
-  head->col = new_col;
-  head->next = temp;
+  // store info to return
+  long rowcol = (*head)->row;
+  rowcol = rowcol << 32;
+  rowcol += (*head)->col;
+  // pop element
+  struct node *popped = (*head);
+  (*head) = (*head)->next;
+  free(popped);
+  // return information
+  return rowcol;
 }
 
-int* pop(struct node *head) {
-  // change head to point to second node
-  int *result;
-  result = malloc(sizeof(int) * 2);
-  if (!result) {
-    printf("Error: malloc failed\n");
-    exit(1);
+void push(int new_row, int new_col, struct node **head) {
+  if (!(*head)) {
+    *head = malloc(sizeof(struct node));
+    if (!(*head)) {
+      printf("Malloc failed!\n");
+      exit(1);
+    }
+    (*head)->row = new_row;
+    (*head)->col = new_col;
+    (*head)->next = NULL;
+  } else {
+    struct node *temp = malloc(sizeof(struct node));
+    if (!temp) {
+      printf("Malloc failed!\n");
+      exit(1);
+    }
+    temp->row = (*head)->row;
+    temp->col = (*head)->col;
+    temp->next = (*head)->next;
+    (*head)->row = new_row;
+    (*head)->col = new_col;
+    (*head)->next = temp;
   }
-  if (!head) {
-    return NULL;
+}
+
+void read_file(FILE *infile) {
+  int ch = fgetc(infile);
+  unsigned int row = 1;
+  unsigned int col = 0;
+  struct node *head = NULL;
+  while (ch != EOF) {
+    // check for special characters
+    if (ch == '\n') {
+      row++;
+      col = 0;
+    } else {
+      // handle stack operations
+      if (ch == '{') {
+        push(row, col, &head);
+      } else if (ch == '}') {
+        if (!head) {
+          printf("Unmatched brace on Line %d and Column %d\n", row, col);
+        } else {
+          unsigned long rowcol = pop(&head);
+          unsigned int match_row = rowcol >> 32;
+          unsigned int match_col = rowcol;
+          printf("Found matching braces: (%d, %d) -> (%d, %d)\n", match_row, match_col, row, col);
+        }
+      }
+    }
+    // increment character
+    ch = fgetc(infile);
+    col++;
   }
-  if (head->row < 0 || head->col < 0) {
-    head = NULL;
-    return NULL;
-  }
-  if (!head->next) {
-    result[0] = head->row;
-    result[1] = head->col;
-    head = NULL;
-    return result;
-  }
-  result[0] = head->row;
-  result[1] = head->col;
-  void *ptr = head->next;
-  head->row = head->next->row;
-  head->col = head->next->col;
-  head->next = head->next->next;
-  free(ptr);
-  return result;
+  clearL(head);
 }
 
 void clearL(struct node *head) {
   if (!head) {
     return;
   }
+  printf("Unmatched brace on Line %d and Column %d\n", head->row, head->col);
   if (head->next) {
     clearL(head->next);
   }
@@ -102,6 +121,7 @@ void clearL(struct node *head) {
   head = NULL;
 }
 
+// this function not used, but kept according to assignment instructions
 void printL(struct node *head) {
   printf("|------------|\n|            |\n| (%3d, %3d) |\n|            |\n", head->row, head->col);
   if (!head->next) {
@@ -109,49 +129,4 @@ void printL(struct node *head) {
   } else {
     printL(head->next);
   }
-}
-
-void read_file(FILE *infile) {
-  int next;
-  int row = 1;
-  int col = 0;
-  struct node *head;
-  int *matching;
-  head = malloc(sizeof(struct node));
-  if (!head) {
-    printf("Error: malloc failed\n");
-    exit(1);
-  }
-  head->row = -1;
-  head->col = -1;
-  for (int next = fgetc(infile); next != EOF; col++, next = fgetc(infile)) {
-    if (next == '\n') {
-      row++;
-      col = 0;
-      continue;
-    }
-    if (next == '{') {
-      push(row, col, head);
-    } else if (next == '}') {
-      matching = pop(head);
-      if (matching && matching[0] >= 0 && matching[1] >= 0) {
-        printf("Found matching braces: (%d, %d) -> (%d, %d)\n", matching[0], matching[1], row, col);
-      } else {
-        printf("Unmatched brace on Line %d and Column %d\n", row, col);
-      }
-      free(matching);
-    }
-  }
-  //clearL(head);
-  matching = pop(head);
-  while (matching) {
-    if (matching[0] < 0 || matching[1] < 0) {
-      break;
-    }
-    printf("Unmatched brace on Line %d and Column %d\n", matching[0], matching[1]);
-    free(matching);
-    matching = pop(head);
-  }
-  free(matching);
-  clearL(head);
 }
