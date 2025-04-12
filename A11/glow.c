@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
   struct ppm_pixel *pixels;
   int w, h;
   int threshold = 200;
-  int blur_box = 25;
+  int blur_box = 50;
   int blur_side = sqrt(blur_box);
   int brightness;
   pixels = read_ppm("earth-small.ppm", &w, &h);
