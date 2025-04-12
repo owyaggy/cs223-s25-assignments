@@ -78,10 +78,25 @@ int main(int argc, char* argv[]) {
       blur[i*w + j].red = total_red / blur_box;
       blur[i*w + j].green = total_green / blur_box;
       blur[i*w + j].blue = total_blue / blur_box;
+      if (blur[i*w + j].red > 255 || blur[i*w + j].green > 255 || blur[i*w + j].blue) {
+        printf("blur too big\n");
+        printf("total red: %d", total_red);
+        printf("total green: %d", total_green);
+        printf("total blue: %d", total_blue);
+      }
       // add blurred pixel to original pixel
       pixels[i*w + j].red += blur[i*w + j].red;
       pixels[i*w + j].green += blur[i*w + j].green;
       pixels[i*w + j].blue += blur[i*w + j].blue;
+      if (pixels[i*w + j].red > 255) {
+        pixels[i*w + j].red = 255;
+      }
+      if (pixels[i*w + j].green > 255) {
+        pixels[i*w + j].green = 255;
+      }
+      if (pixels[i*w + j].blue > 255) {
+        pixels[i*w + j].blue = 255;
+      }
     }
   }
   write_ppm("blur.ppm", blur, w, h);
