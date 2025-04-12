@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
       total_red = 0;
       total_green = 0;
       total_blue = 0;
-      for (int y = bottom; y <= top; y++) {
+      for (int y = top; y <= bottom; y++) {
         for (int x = left; x <= right; x++) {
           total_red += filter_area[y*w + x].red;
           total_green += filter_area[y*w + x].green;
@@ -84,6 +84,7 @@ int main(int argc, char* argv[]) {
       pixels[i*w + j].blue += blur[i*w + j].blue;
     }
   }
+  write_ppm("blur.ppm", blur, w, h);
   write_ppm("glow.ppm", pixels, w, h);
   free(filter_area);
   free(pixels);
