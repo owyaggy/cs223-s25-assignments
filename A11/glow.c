@@ -88,9 +88,37 @@ int main(int argc, char* argv[]) {
         printf("q: %d\n", blur[i*w + j].blue);
       }
       // add blurred pixel to original pixel
-      pixels[i*w + j].red += blur[i*w + j].red;
-      pixels[i*w + j].green += blur[i*w + j].green;
-      pixels[i*w + j].blue += blur[i*w + j].blue;
+      int combo;
+      combo = pixels[i*w + j].red + blur[i*w + j].red;
+      if (combo > 255) {
+        combo = 255;
+      }
+      pixels[i*w + j].red = combo;
+      combo = pixels[i*w + j].green + blur[i*w + j].green;
+      if (combo > 255) {
+        combo = 255;
+      }
+      pixels[i*w + j].green = combo;
+      combo = pixels[i*w + j].blue + blur[i*w + j].blue;
+      if (combo > 255) {
+        combo = 255;
+      }
+      pixels[i*w + j].blue = combo;
+      
+      /*if (combo > 255) {
+        printf("RED | pixel: %d | blur: %d | combo: %d\n", pixels[i*w + j].red, blur[i*w + j].red, combo);
+      }
+      combo = pixels[i*w + j].green + blur[i*w + j].green;
+      if (combo > 255) {
+        printf("GREEN | pixel: %d | blur: %d | combo: %d\n", pixels[i*w + j].green, blur[i*w + j].green, combo);
+      }
+      combo = pixels[i*w + j].blue + blur[i*w + j].blue;
+      if (combo > 255) {
+        printf("BLUE | pixel: %d | blur: %d | combo: %d\n", pixels[i*w + j].blue, blur[i*w + j].blue, combo);
+      }
+      pixels[i*w + j].red = pixels[i*w + j].red + blur[i*w + j].red;
+      pixels[i*w + j].green = pixels[i*w + j].green + blur[i*w + j].green;
+      pixels[i*w + j].blue = pixels[i*w + j].blue + blur[i*w + j].blue;
       if (pixels[i*w + j].red > 255) {
         printf("red over");
         pixels[i*w + j].red = 255;
@@ -102,7 +130,7 @@ int main(int argc, char* argv[]) {
       if (pixels[i*w + j].blue > 255) {
         printf("blue over");
         pixels[i*w + j].blue = 255;
-      }
+      }*/
     }
   }
   write_ppm("blur.ppm", blur, w, h);
