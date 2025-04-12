@@ -18,12 +18,14 @@ int main(int argc, char* argv[]) {
   int blur_side = sqrt(blur_box);
   int brightness;
   pixels = read_ppm("earth-small.ppm", &w, &h);
+  printf("w: %d, h: %d\n", w, h);
   struct ppm_pixel *filter_area;
   filter_area = malloc(sizeof(struct ppm_pixel) * w * h);
   for (int i = 0; i < h; i++) {
     for (int j = 0; j < w; j++) {
       brightness = (pixels[i*w + j].red + pixels[i*w + j].green + pixels[i*w + j].blue) / 3;
-      if (brightness >= 200) {
+      if (brightness >= threshold) {
+        //printf("(%d, %d) brightness : %d\n", i, j, brightness);
         filter_area[i*w + j].red = pixels[i*w + j].red;
         filter_area[i*w + j].green = pixels[i*w + j].green;
         filter_area[i*w + j].blue = pixels[i*w + j].blue;
@@ -34,6 +36,7 @@ int main(int argc, char* argv[]) {
       }
     }
   }
+  write_ppm("filter_area.ppm", filter_area, w, h);
   struct ppm_pixel *blur;
   blur = malloc(sizeof(struct ppm_pixel) * w * h);
   int top; // y coordinate of top pixel used in blur box
