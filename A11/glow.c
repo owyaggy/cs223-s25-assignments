@@ -25,7 +25,6 @@ int main(int argc, char* argv[]) {
     for (int j = 0; j < w; j++) {
       brightness = (pixels[i*w + j].red + pixels[i*w + j].green + pixels[i*w + j].blue) / 3;
       if (brightness >= threshold) {
-        //printf("(%d, %d) brightness : %d\n", i, j, brightness);
         filter_area[i*w + j].red = pixels[i*w + j].red;
         filter_area[i*w + j].green = pixels[i*w + j].green;
         filter_area[i*w + j].blue = pixels[i*w + j].blue;
@@ -36,7 +35,6 @@ int main(int argc, char* argv[]) {
       }
     }
   }
-  write_ppm("filter_area.ppm", filter_area, w, h);
   struct ppm_pixel *blur;
   blur = malloc(sizeof(struct ppm_pixel) * w * h);
   int top; // y coordinate of top pixel used in blur box
@@ -78,15 +76,6 @@ int main(int argc, char* argv[]) {
       blur[i*w + j].red = total_red / blur_box;
       blur[i*w + j].green = total_green / blur_box;
       blur[i*w + j].blue = total_blue / blur_box;
-      if (blur[i*w + j].red > 255 || blur[i*w + j].green > 255 || blur[i*w + j].blue > 255) {
-        printf("blur too big\n");
-        printf("total red: %d ", total_red);
-        printf("q: %d ", blur[i*w + j].red);
-        printf("total green: %d ", total_green);
-        printf("q: %d ", blur[i*w + j].green);
-        printf("total blue: %d ", total_blue);
-        printf("q: %d\n", blur[i*w + j].blue);
-      }
       // add blurred pixel to original pixel
       int combo;
       combo = pixels[i*w + j].red + blur[i*w + j].red;
@@ -104,36 +93,8 @@ int main(int argc, char* argv[]) {
         combo = 255;
       }
       pixels[i*w + j].blue = combo;
-      
-      /*if (combo > 255) {
-        printf("RED | pixel: %d | blur: %d | combo: %d\n", pixels[i*w + j].red, blur[i*w + j].red, combo);
-      }
-      combo = pixels[i*w + j].green + blur[i*w + j].green;
-      if (combo > 255) {
-        printf("GREEN | pixel: %d | blur: %d | combo: %d\n", pixels[i*w + j].green, blur[i*w + j].green, combo);
-      }
-      combo = pixels[i*w + j].blue + blur[i*w + j].blue;
-      if (combo > 255) {
-        printf("BLUE | pixel: %d | blur: %d | combo: %d\n", pixels[i*w + j].blue, blur[i*w + j].blue, combo);
-      }
-      pixels[i*w + j].red = pixels[i*w + j].red + blur[i*w + j].red;
-      pixels[i*w + j].green = pixels[i*w + j].green + blur[i*w + j].green;
-      pixels[i*w + j].blue = pixels[i*w + j].blue + blur[i*w + j].blue;
-      if (pixels[i*w + j].red > 255) {
-        printf("red over");
-        pixels[i*w + j].red = 255;
-      }
-      if (pixels[i*w + j].green > 255) {
-        printf("green over");
-        pixels[i*w + j].green = 255;
-      }
-      if (pixels[i*w + j].blue > 255) {
-        printf("blue over");
-        pixels[i*w + j].blue = 255;
-      }*/
     }
   }
-  write_ppm("blur.ppm", blur, w, h);
   write_ppm("glow.ppm", pixels, w, h);
   free(filter_area);
   free(pixels);
