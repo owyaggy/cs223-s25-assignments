@@ -25,11 +25,12 @@ void *start(void* userdata) {
   printf("Thread is coloring rows %d to %d with color: %d %d %d\n", data->starti, data->endi, data->color.red, data->color.green, data->color.blue);
   for (int i = data->starti; i < data->endi; i++) { // y indices
     for (int j = 0; j < data->width; j++) { // x indices
+      //data->image[j * data->width + i] = (struct ppm_pixel) data->image[j * data->width + i];
       data->image[j * data->width + i].red = data->color.red;
       data->image[j * data->width + i].green = data->color.green;
       data->image[j * data->width + i].blue = data->color.blue;
     }
-  } 
+  }
   return 0;
 }
 
@@ -62,4 +63,8 @@ int main(int argc, char** argv) {
   }
 
   write_ppm("stripes.ppm", image, size, size);
+  free(image);
+  free(colors);
+  free(threads);
+  free(data);
 }
