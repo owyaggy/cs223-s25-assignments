@@ -25,10 +25,10 @@ void *start(void* userdata) {
   printf("Thread is coloring rows %d to %d with color: %d %d %d\n", data->starti, data->endi, data->color.red, data->color.green, data->color.blue);
   for (int i = data->starti; i < data->endi; i++) { // y indices
     for (int j = 0; j < data->width; j++) { // x indices
-      //data->image[j * data->width + i] = (struct ppm_pixel) data->image[j * data->width + i];
-      data->image[j * data->width + i].red = data->color.red;
-      data->image[j * data->width + i].green = data->color.green;
-      data->image[j * data->width + i].blue = data->color.blue;
+      //data->image[i * data->width + j].red = data->color.red;
+      //data->image[i * data->width + j].green = data->color.green;
+      //data->image[i * data->width + j].blue = data->color.blue;
+      data->image[i * data->width + j] = data->color;
     }
   }
   return 0;
@@ -55,6 +55,7 @@ int main(int argc, char** argv) {
     data[i].image = image;
     data[i].width = size;
     data[i].height = size;
+    data[i].color = colors[i];
     pthread_create(&threads[i], NULL, start, &data[i]);
   }
 
