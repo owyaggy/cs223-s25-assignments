@@ -18,6 +18,18 @@ struct thread_data {
 void *start(void* userdata) {
   struct thread_data* data = (struct thread_data*) userdata;
   // todo: your code here
+  srand((unsigned int) pthread_self()); // uses thread id as seed
+  data->color.red = rand() % 255;
+  data->color.green = rand() % 255;
+  data->color.blue = rand() % 255;
+  printf("Thread is coloring rows %d to %d with color: %d %d %d\n", data->starti, data->endi, data->color.red, data->color.green, data->color.blue);
+  for (int i = data->starti; i < data->endi; i++) { // y indices
+    for (int j = 0; j < data->width; j++) { // x indices
+      data->image[j * data->width + i].red = data->color.red;
+      data->image[j * data->width + i].green = data->color.green;
+      data->image[j * data->width + i].blue = data->color.blue;
+    }
+  } 
   return 0;
 }
 
@@ -37,6 +49,11 @@ int main(int argc, char** argv) {
   struct thread_data* data = malloc(sizeof(struct thread_data) * N);
 
   for (int i = 0; i < N; i++) {
+    data[i].starti = i * (size / N);
+    data[i].endi = data[i].starti + (size / N);
+    data[i].image = image;
+    data[i].width = size;
+    data[i].height = size;
     pthread_create(&threads[i], NULL, start, &data[i]);
   }
 
